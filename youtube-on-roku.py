@@ -10,6 +10,7 @@ except ImportError:
 
 import json
 import requests
+import argparse
 import urllib.parse
 from ssdpy import SSDPClient
 import xml.etree.ElementTree as ET
@@ -26,12 +27,13 @@ def pick_format(data):
 
 def get_roku_info(roku):
     data = requests.get(roku + 'query/device-info')
-    root = ET.fromstring(data)
+    root = ET.fromstring(data.text)
     if root.find('user-device-name'):
         return root.find('user-device-name').text + ' at ' + roku
-    if root.find('default-device-name'):
+    elif root.find('default-device-name'):
         return root.find('default-device-name').text + ' at ' + roku
-    return 'Unknown Roku at ' + roku
+    else:
+        return 'Unknown Roku at ' + roku
 
 def make_roku_url(roku, url):
     params = urllib.parse.urlencode({'t':'v', 'u':url, 'videoName':'(null)', 'k': '(null)', 'videoFormat': 'mp4'})
@@ -48,23 +50,41 @@ def get_roku():
 
 #        print(device.get("usn") + '\t' + device.get("location"))
 
-if len(sys.argv) != 2:
-    print('Usage: ' + sys.argv[0] + ' YOUTUBE_URL_OR_VIDEO_ID')
-    sys.exit(0)
+parser = argparse.ArgumentParser(description='Play YouTube videos on a Roku on the LAN.')
 
-URL = sys.argv[1]
+parser.add_argument('-n', '--number', metavar='NUMBER', nargs=1, type=int, default=0, help='Use the Roku device number NUMBER')
+parser.add_argument('-u', '--url', metavar='ROKU_URL', nargs=1, default='', help='Use the Roku URL ROKU_URL')
+parser.add_argument('-l', '--list', action='store_true', help='Just list the Roku devices this program can discover')
+parser.add_argument('video', nargs='?', help='The YouTube URL or video ID')
 
-roku = ""
-rokus = get_roku()
-if len(rokus) > 1:
+args = parser.parse_args()
+
+if args.list:
+    rokus = get_roku()
     n = 1
     for roku in rokus:
         print("{0} - {1}".format(n, get_roku_info(roku.get("location"))))
         n = n + 1
-    num = input("Enter number")
-    roku = rokus[num - 1].get("location")
+    sys.exit(0)
+
+roku = ""
+if len(args.url) > 0:
+    roku = args.url
 else:
-    roku = rokus[0].get("location")
+    rokus = get_roku()
+    if (len(rokus) > 1) and (args.number == 0):
+        n = 1
+        for roku in rokus:
+            print("{0} - {1}".format(n, get_roku_info(roku.get("location"))))
+            n = n + 1
+        num = input("Enter number")
+        roku = rokus[num - 1].get("location")
+    elif (len(rokus) > 1) and (args.number != 0):
+        roku = rokus[args.number - 1].get("location")
+    else:
+        roku = rokus[0].get("location")
+
+URL = args.video
 
 ydl_opts = {'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'}
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
