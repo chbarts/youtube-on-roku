@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
 import sys
-sys.path.insert(0, 'yt-dlp')
+
+try:
+    import yt_dlp
+except ImportError:
+    sys.path.insert(0, 'yt-dlp')
+    import yt_dlp
+
 import json
-import yt_dlp
 import requests
 import urllib.parse
 
