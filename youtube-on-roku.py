@@ -18,7 +18,7 @@ IP = '192.168.1.182'
 def pick_format(data):
     res = {}
     for format in data['formats']:
-        if format['ext'] == 'mp4':
+        if (format['ext'] == 'mp4') and (format['acodec'] != 'none') and (format['vcodec'] != 'none'):
             res = format
     return res
 
