@@ -11,7 +11,7 @@ except ImportError:
 import json
 import requests
 import urllib.parse
-from ssdpy import SSDClient
+from ssdpy import SSDPClient
 import xml.etree.ElementTree as ET
 
 URL = 'https://www.youtube.com/watch?v=BaW_jenozKc'
