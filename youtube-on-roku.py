@@ -27,7 +27,7 @@ def make_roku_url(url):
     return 'http://' + IP + ':8060/input/15985?' + params
 
 if len(sys.argv) != 2:
-    print('Usage: ' + sys.argv[0] + ' YOUTUBE_URL')
+    print('Usage: ' + sys.argv[0] + ' YOUTUBE_URL_OR_VIDEO_ID')
     sys.exit(0)
 
 URL = sys.argv[1]
