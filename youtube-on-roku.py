@@ -97,8 +97,10 @@ URL = args.video
 ydl_opts = {'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'}
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     info = ydl.extract_info(URL, download=False)
-    res = pick_format(ydl.sanitize_info(info))
-    if len(res['title']) != 0:
-        requests.post(make_roku_url(roku, res['url'], title=res['title']))
+    jinfo = ydl.sanitize_info(info)
+    title = jinfo['title']
+    res = pick_format(jinfo)
+    if len(title) != 0:
+        requests.post(make_roku_url(roku, res['url'], title=title))
     else:
         requests.post(make_roku_url(roku, res['url']))
