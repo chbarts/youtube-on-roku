@@ -37,7 +37,7 @@ def get_roku_info(roku):
     elif root.find('default-device-name') != None:
         name = root.find('default-device-name').text
     else:
-        name 'Unknown Roku'
+        name = 'Unknown Roku'
     if loc != None:
         return "{0} ({1}) at {2}".format(name, loc, url)
     else:
