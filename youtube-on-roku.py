@@ -31,7 +31,7 @@ def get_roku_info(roku):
     loc = None
     name = None
     if root.find('user-device-location') != None:
-        loc = root.find('user-device-location).text
+        loc = root.find('user-device-location').text
     if root.find('user-device-name') != None:
         name = root.find('user-device-name').text
     elif root.find('default-device-name') != None:
