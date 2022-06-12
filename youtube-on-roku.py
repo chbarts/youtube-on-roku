@@ -39,9 +39,9 @@ def get_roku_info(roku):
     else:
         name = 'Unknown Roku'
     if loc != None:
-        return "{0} ({1}) at {2}".format(name, loc, url)
+        return "{0} ({1}) at {2}".format(name, loc, roku)
     else:
-        return "{0} at {2}".format(name, url)
+        return "{0} at {2}".format(name, roku)
 
 def make_roku_url(roku, url):
     params = urllib.parse.urlencode({'t':'v', 'u':url, 'videoName':'(null)', 'k': '(null)', 'videoFormat': 'mp4'})
