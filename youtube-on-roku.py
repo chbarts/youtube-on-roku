@@ -43,8 +43,8 @@ def get_roku_info(roku):
     else:
         return "{0} at {1}".format(name, roku)
 
-def make_roku_url(roku, url):
-    params = urllib.parse.urlencode({'t':'v', 'u':url, 'videoName':'(null)', 'k': '(null)', 'videoFormat': 'mp4'})
+def make_roku_url(roku, url, title='(null)'):
+    params = urllib.parse.urlencode({'t':'v', 'u':url, 'videoName': title, 'k': '(null)', 'videoFormat': 'mp4'})
     return roku + 'input/15985?' + params
 
 def get_roku():
@@ -98,4 +98,7 @@ ydl_opts = {'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'}
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     info = ydl.extract_info(URL, download=False)
     res = pick_format(ydl.sanitize_info(info))
-    requests.post(make_roku_url(roku, res['url']))
+    if len(res['title']) != 0:
+        requests.post(make_roku_url(roku, res['url'], title=res['title']))
+    else:
+        requests.post(make_roku_url(roku, res['url']))
