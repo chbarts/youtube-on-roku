@@ -19,7 +19,7 @@ URL = 'https://www.youtube.com/watch?v=BaW_jenozKc'
 IP = '192.168.1.182'
 
 def pick_format(data):
-    res = {}
+    res = None
     for format in data['formats']:
         if (format['ext'] == 'mp4') and (format['acodec'] != 'none') and (format['vcodec'] != 'none'):
             res = format
@@ -99,4 +99,7 @@ with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     info = ydl.extract_info(URL, download=False)
     jinfo = ydl.sanitize_info(info)
     res = pick_format(jinfo)
+    if res == None:
+        print("No usable format found")
+        sys.exit(1)
     requests.post(make_roku_url(roku, res['url']))
