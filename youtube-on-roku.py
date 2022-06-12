@@ -28,12 +28,20 @@ def pick_format(data):
 def get_roku_info(roku):
     data = requests.get(roku + 'query/device-info')
     root = ET.fromstring(data.text)
+    loc = None
+    name = None
+    if root.find('user-device-location') != None:
+        loc = root.find('user-device-location).text
     if root.find('user-device-name') != None:
-        return root.find('user-device-name').text + ' at ' + roku
+        name = root.find('user-device-name').text
     elif root.find('default-device-name') != None:
-        return root.find('default-device-name').text + ' at ' + roku
+        name = root.find('default-device-name').text
     else:
-        return 'Unknown Roku at ' + roku
+        name 'Unknown Roku'
+    if loc != None:
+        return "{0} ({1}) at {2}".format(name, loc, url)
+    else:
+        return "{0} at {2}".format(name, url)
 
 def make_roku_url(roku, url):
     params = urllib.parse.urlencode({'t':'v', 'u':url, 'videoName':'(null)', 'k': '(null)', 'videoFormat': 'mp4'})
