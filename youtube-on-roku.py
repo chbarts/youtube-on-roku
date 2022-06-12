@@ -28,9 +28,9 @@ def pick_format(data):
 def get_roku_info(roku):
     data = requests.get(roku + 'query/device-info')
     root = ET.fromstring(data.text)
-    if root.find('user-device-name'):
+    if root.find('user-device-name') != None:
         return root.find('user-device-name').text + ' at ' + roku
-    elif root.find('default-device-name'):
+    elif root.find('default-device-name') != None:
         return root.find('default-device-name').text + ' at ' + roku
     else:
         return 'Unknown Roku at ' + roku
