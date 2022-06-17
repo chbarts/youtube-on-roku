@@ -74,6 +74,10 @@ parser.add_argument('video', nargs='?', help='The YouTube URL or video ID')
 
 args = parser.parse_args()
 
+if (not args.list) and ((args.video == None) or (len(args.video) == 0)):
+    parser.print_help()
+    sys.exit(0)
+
 if args.list:
     rokus = get_roku()
     n = 1
