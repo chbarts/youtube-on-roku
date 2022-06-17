@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 
 try:
     import yt_dlp
 except ImportError:
-    sys.path.insert(0, 'yt-dlp')
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'yt-dlp')
+    if os.path.exists(path):
+        sys.path.insert(0, path)
+    elif os.path.exists(path + '.zip'):
+        sys.path.insert(0, path + '.zip')
+    else:
+        raise
     import yt_dlp
 
 import json
