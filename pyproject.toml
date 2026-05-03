@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube-on-roku"
+version = "0.1"
+license = "CC0-1.0"
+license-files = ["LICENSE"]
+dependencies = [
+    "yt_dlp",
+]
+
+[project.scripts]
+atom-to-html = "youtubeonroku:main"
