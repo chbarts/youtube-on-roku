@@ -65,52 +65,55 @@ def get_roku():
 
 #        print(device.get("usn") + '\t' + device.get("location"))
 
-parser = argparse.ArgumentParser(description='Play YouTube videos on a Roku on the LAN.')
+def main():
+    parser = argparse.ArgumentParser(description='Play YouTube videos on a Roku on the LAN.')
 
-parser.add_argument('-n', '--number', metavar='NUMBER', nargs=1, type=int, default=0, help='Use the Roku device number NUMBER')
-parser.add_argument('-u', '--url', metavar='ROKU_URL', nargs=1, default='', help='Use the Roku URL ROKU_URL')
-parser.add_argument('-l', '--list', action='store_true', help='Just list the Roku devices this program can discover')
-parser.add_argument('video', nargs='?', help='The YouTube URL or video ID')
+    parser.add_argument('-n', '--number', metavar='NUMBER', nargs=1, type=int, default=0, help='Use the Roku device number NUMBER')
+    parser.add_argument('-u', '--url', metavar='ROKU_URL', nargs=1, default='', help='Use the Roku URL ROKU_URL')
+    parser.add_argument('-l', '--list', action='store_true', help='Just list the Roku devices this program can discover')
+    parser.add_argument('video', nargs='?', help='The YouTube URL or video ID')
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-if (not args.list) and ((args.video == None) or (len(args.video) == 0)):
-    parser.print_help()
-    sys.exit(0)
+    if (not args.list) and ((args.video == None) or (len(args.video) == 0)):
+        parser.print_help()
+        sys.exit(0)
 
-if args.list:
-    rokus = get_roku()
-    n = 1
-    for roku in rokus:
-        print("{0} - {1}".format(n, get_roku_info(roku.get("location"))))
-        n = n + 1
-    sys.exit(0)
-
-roku = ""
-if len(args.url) > 0:
-    roku = args.url
-else:
-    rokus = get_roku()
-    if (len(rokus) > 1) and (args.number == 0):
+    if args.list:
+        rokus = get_roku()
         n = 1
         for roku in rokus:
             print("{0} - {1}".format(n, get_roku_info(roku.get("location"))))
             n = n + 1
-        num = input("Enter number")
-        roku = rokus[num - 1].get("location")
-    elif (len(rokus) > 1) and (args.number != 0):
-        roku = rokus[args.number - 1].get("location")
+        sys.exit(0)
+
+    roku = ""
+    if len(args.url) > 0:
+        roku = args.url
     else:
-        roku = rokus[0].get("location")
+        rokus = get_roku()
+        if (len(rokus) > 1) and (args.number == 0):
+            n = 1
+            for roku in rokus:
+                print("{0} - {1}".format(n, get_roku_info(roku.get("location"))))
+                n = n + 1
+            num = input("Enter number")
+            roku = rokus[num - 1].get("location")
+        elif (len(rokus) > 1) and (args.number != 0):
+            roku = rokus[args.number - 1].get("location")
+        else:
+            roku = rokus[0].get("location")
 
-URL = args.video
+    URL = args.video
 
-ydl_opts = {'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'}
-with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    info = ydl.extract_info(URL, download=False)
-    jinfo = ydl.sanitize_info(info)
-    res = pick_format(jinfo)
-    if res == None:
-        print("No usable format found")
-        sys.exit(1)
-    requests.post(make_roku_url(roku, res['url']))
+    ydl_opts = {'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'}
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(URL, download=False)
+        jinfo = ydl.sanitize_info(info)
+        res = pick_format(jinfo)
+        if res == None:
+            print("No usable format found")
+            sys.exit(1)
+        requests.post(make_roku_url(roku, res['url']))
+
+main()
